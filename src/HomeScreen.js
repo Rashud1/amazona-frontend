@@ -1,7 +1,9 @@
 import React, { useEffect, useReducer } from 'react'
-import { Link } from 'react-router-dom'
 import axios from 'axios'
-import logger from 'use-reducer-logger'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Product from './components/Product'
+import { Helmet } from 'react-helmet-async'
 const reducer = (state, action) => {
     switch(action.type){
         case 'FETCH_REQUEST':
@@ -17,7 +19,7 @@ const reducer = (state, action) => {
 
 
 function HomeScreen() {
-    const [{loading, error, products}, dispatch] = useReducer(logger(reducer), {
+    const [{loading, error, products}, dispatch] = useReducer(reducer, {
         products: [],
         loading: true, 
         error:'',
@@ -39,30 +41,25 @@ function HomeScreen() {
     },[])
   return (
 <div>
+    <Helmet>
+        <title>Amazona</title>
+    </Helmet>
     <h1> Featured products</h1>
-    <div className="products">
-        {loading ? (
-            <div>loading...</div>
-            ): error ? (
-                <div>{error}</div>
-            ):(products.map((product) => (
-                <div className="product" key={product.slug}>
-                <Link to={`/product/${product.slug}`}>
-                    <img src={product.image} alt={product.name} />
-                </Link>
-                <div className="product-info">
-                <Link to ={`/product/${product.slug}`}>
-                    <p>{product.name}</p>
-                </Link>
-                <Link to={`/product/${product.slug}`}>
-                    <p><strong>${product.price}</strong></p>
-                </Link>
-                <button>Add cart</button>
-                </div>
-                </div>
-            )))
-        }
-   </div>
+        <div className="products">
+            {loading ? (
+                <div>loading...</div>
+                ): error ? (
+                    <div>{error}</div>
+                ):(
+                <Row>
+                     {products.map((product) => (
+                        <Col key={product.slug} sm={6} md={4} lg={3} className="mb-3">
+                              <Product product={product}></Product>
+                        </Col>
+            ))}
+                </Row>
+            )}
+    </div>
 </div>
   )
 }
